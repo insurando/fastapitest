@@ -189,41 +189,48 @@ class CustomFormatter(AccessFormatter):
       def atoms(self, resp, req, environ, request_time, scope):
         """ Gets atoms for log formating.
         """
-        #status = resp.status
-        #if isinstance(status, str):
-        #    status = status.split(None, 1)[0]
 
         atoms = {}
-
-        atoms.update({"{%s}o" % k.lower(): v for k, v in scope.get('headers')})
-
         # add environ variables
-        environ_variables = environ.items()
-        atoms.update({"{%s}e" % k.lower(): v for k, v in environ_variables})
+        #environ_variables = environ.items()
+        #atoms.update({"{%s}e" % k.lower(): v for k, v in environ_variables})
+
+        print("################environ#############")
+        print(environ)
+        print("################environ#############")
+
+        print("################scope#############")
+        print(scope)
+        print("################scope#############")
 
 
+        print("################headers#############")
+        headers = {d[0]:d[1] for d in scope.get('headers')}
+        print(headers)
+        print("################headers#############")
+
+        client = scope.get("client", ('-',''))[0]
+        
         atoms.update({
-            'h': atoms.get("{b'remote-addr'}o", "-"),
+            'h': client,
             'l': '-',
-            'u': self._get_user(environ) or '-',
-            't': self.now(),
-            #'r': "%s %s %s" % (environ['REQUEST_METHOD'],
-            #                   environ['RAW_URI'],
-            #                   environ["SERVER_PROTOCOL"]),
-            #'s': status,
-            'm': atoms.get("{b'request-method'}o", "-"),
-            'U': atoms.get("{b'path-info'}o", "-"),
-            'q': atoms.get("{b'query-string'}o", "-"),
-            'H': atoms.get("{b'server-protocol'}o", "-"),
-            'b': getattr(resp, 'sent', None) is not None and str(resp.sent) or '-',
-            'B': getattr(resp, 'sent', None),
-            'f': atoms.get("{b'http-referer'}o", "-"),
-            'a': atoms.get("{b'user-agent'}o", "-"),
+            's': '-',
+            #'u': self._get_user(environ) or '-',
+            #'t': self.now(),
+            'm': str(scope.get("method","-")),
+            'U': scope.get("path", "-"),
+            'q': scope.get("query_string", "-").decode("utf-8"),
+            'H': str(scope.get("type", "-")),
+            #'b': getattr(resp, 'sent', None) is not None and str(resp.sent) or '-',
+            #'B': getattr(resp, 'sent', None),
+            'f': headers.get(b"http-referer", b"-").decode("utf-8"),
+            'a': headers.get(b"user-agent",b"-").decode("utf-8"),
+            'x-session-id': str(headers.get(b"x-session-id","-")),
             'T': request_time.second,
-            'D': (request_time.second * 1000000) + request_time.microsecond,
-            'M': (request_time.second * 1000) + int(request_time.microsecond/1000),
-            'L': "%d.%06d" % (request_time.second, request_time.microsecond),
-            'p': "<%s>" % os.getpid()
+            #'D': (request_time.second * 1000000) + request_time.microsecond,
+            #'M': (request_time.second * 1000) + int(request_time.microsecond/1000),
+            #'L': "%d.%06d" % (request_time.second, request_time.microsecond),
+            #'p': "<%s>" % os.getpid()
         })
 
         # add request headers
@@ -277,6 +284,6 @@ class CustomFormatter(AccessFormatter):
             self.atoms([], [], os.environ, datetime.now(), scope)
         )
         recordcopy.__dict__.update(safe_atoms)
-        # pprint(vars(recordcopy))
-        # dumper.dump(recordcopy)
+        pprint(vars(recordcopy))
+        #dumper.dump(recordcopy)
         return super().formatMessage(recordcopy)

@@ -8,6 +8,7 @@ from typing import List, Set
 import pickle
 import itertools
 from fastapi.middleware.cors import CORSMiddleware
+import asyncio
 
 #=========== CONSTANTS and ERROR Definitions =================
 global LANGUAGES
@@ -47,7 +48,7 @@ app.add_middleware(
 
 ################## Main Endpoint ###################
 @app.get("/")
-async def probe(*, x_start_time_msec: str = Header(None)):
-	return {"message": "FastAPI Inconnect",
-			"release": "1"
-}
+def probe(*, x_start_time_msec: str = Header(None)):
+    # sleep 1 second to check response time logging
+    time.sleep(1)
+    return {"message": "FastAPI Inconnect","release": "1"}
