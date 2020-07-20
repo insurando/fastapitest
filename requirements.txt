@@ -1,5 +1,5 @@
 uvicorn
 gunicorn
+numpy
 fastapi
-Dumper
 click

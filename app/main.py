@@ -9,6 +9,7 @@ import pickle
 import itertools
 from fastapi.middleware.cors import CORSMiddleware
 import asyncio
+import numpy as np
 
 #=========== CONSTANTS and ERROR Definitions =================
 global LANGUAGES
@@ -19,20 +20,9 @@ ERROR_LAN = HTTPException(status_code=404, detail="language header not one of de
 ################## Setup Logger from gunicorn (hack) #########################
 import logging
 
-'''
-gunicorn_logger = logging.getLogger('gunicorn.error')
-root = logging.getLogger()
-root.setLevel(logging.INFO)
-handler = logging.StreamHandler(sys.stdout)
-handler.setLevel(logging.INFO)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-root.addHandler(handler)
-'''
-
 
 ################## MAIN App ####################
-app = FastAPI(title='test',description='test',version='1.0.0',docs_url=None, redoc_url=None)
+app = FastAPI(title='test',description='test',version='1.0.0')
 
 origins = [
     "*"
@@ -47,8 +37,10 @@ app.add_middleware(
 )
 
 ################## Main Endpoint ###################
-@app.get("/")
-def probe(*, x_start_time_msec: str = Header(None)):
+@app.get("/probe")
+def probe(*, accept_language: str = Header('de-CH'),x_session_id: str = Header('-'),response: Response):
+    start = time.time()
     # sleep 1 second to check response time logging
-    time.sleep(1)
+    time.sleep(2)
+    response.headers["X-Response-Time"] = str(np.round(time.time() - start,6))
     return {"message": "FastAPI Inconnect","release": "1"}
