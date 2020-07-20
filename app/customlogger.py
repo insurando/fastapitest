@@ -179,13 +179,13 @@ class CustomFormatter(AccessFormatter):
                     user = auth[0]
         return user
 
-    def atoms(self, environ, request_time, scope):
+    def atoms(self, environ, request_time, scope, statuscode):
         headers = {d[0]: d[1] for d in scope.get('headers')}
         client = scope.get("client", ('-', ''))[0]
         atoms = {
             'h': client,
             'l': '-',
-            's': str(scope.get('status_code', '-')),
+            's': statuscode,
             'u': self._get_user(environ) or '-',
             't': self.now(),
             'm': str(scope.get("method", "-")),
@@ -207,7 +207,7 @@ class CustomFormatter(AccessFormatter):
         recordcopy = copy(record)
         scope = recordcopy.__dict__["scope"]
         safe_atoms = self.atoms_wrapper_class(
-            self.atoms(os.environ, datetime.now(), scope)
+            self.atoms(os.environ, datetime.now(), scope, recordcopy.status_code)
         )
         recordcopy.__dict__.update(safe_atoms)
         return super().formatMessage(recordcopy)
