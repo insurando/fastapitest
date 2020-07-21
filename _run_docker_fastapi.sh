@@ -9,4 +9,4 @@ docker run -it --name=fastapi \
     -v $PWD/start.sh:/start.sh \
     -v $PWD/logging.conf:/logging.conf \
     -v $PWD/start-reload.sh:/start-reload.sh \
-    fastapi bash -c "/start.sh"
+    fastapi bash -c "/start-reload.sh"

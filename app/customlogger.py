@@ -214,7 +214,7 @@ class CustomFormatter(AccessFormatter):
     def formatMessage(self, record):
         recordcopy = copy(record)
         scope = recordcopy.__dict__["scope"]
-        pprint(vars(recordcopy))
+        #pprint(vars(recordcopy))
         safe_atoms = self.atoms_wrapper_class(
             self.atoms(os.environ, datetime.now(), scope, recordcopy.status_code,recordcopy.created)
         )
