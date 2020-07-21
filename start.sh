@@ -29,6 +29,7 @@ else
     echo "There is no script $PRE_START_PATH"
 fi
 
+
 # Start Gunicorn
 exec gunicorn -k uvicorn.workers.UvicornWorker -c "$GUNICORN_CONF" "$APP_MODULE" --log-config "/logging.conf"
 #exec gunicorn -k uvicorn.workers.UvicornWorker -c "$GUNICORN_CONF" "$APP_MODULE" --log-level=debug --access-logformat="[dev.api] %(h)s %(l)s %(u)s %(t)s .%(r)s. %(s)s %(b)s .%(f)s. .%(a)s. conn=\"%({Connection}i)s\"" --logger-class="gunicorn.glogging.Logger"

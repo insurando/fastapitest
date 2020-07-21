@@ -8,9 +8,8 @@ import time
 from copy import copy
 from datetime import datetime
 from pprint import pprint
+
 import click
-import numpy as np
-import time
 
 TRACE_LOG_LEVEL = 5
 
@@ -182,9 +181,10 @@ class CustomFormatter(AccessFormatter):
                     user = auth[0]
         return user
 
-    def atoms(self, environ, request_time, scope, statuscode,created):
-        headers = {d[0]: d[1] for d in scope.get('headers')}
-        #print(headers)
+    def atoms(self, environ, request_time, scope, statuscode, created):
+        #headers = {d[0]: d[1] for d in scope.get('headers')}
+        headers = dict(scope.get('headers',[('-','-')]))
+        response_headers = dict(scope.get('response_headers',[('-','-')]))
         client = scope.get("client", ('-', ''))[0]
         atoms = {
             'h': client,
@@ -199,16 +199,15 @@ class CustomFormatter(AccessFormatter):
             'f': headers.get(b"referer", b"-").decode("utf-8"),
             'a': headers.get(b"user-agent", b"-").decode("utf-8"),
             'x-session-id': headers.get(b"x-session-id", b"-").decode("utf-8"),
-            'x-response-time': "get.response.header['x-response-time']",
-            #'T': request_time.second,
-            #'D': (request_time.second * 1000000) + request_time.microsecond,
-            #'M': (request_time.second * 1000) + int(request_time.microsecond/1000),
-            #'L': "%d.%06d" % (request_time.second, request_time.microsecond),
-            #'L': (time.time() - request_time.timestamp()),
+            'x-response-time': response_headers.get(b"x-response-time", b"").decode("utf-8"),   
+            # 'T': request_time.second,
+            # 'D': (request_time.second * 1000000) + request_time.microsecond,
+            # 'M': (request_time.second * 1000) + int(request_time.microsecond/1000),
+            # 'L': "%d.%06d" % (request_time.second, request_time.microsecond),
+            # 'L': (time.time() - request_time.timestamp()),
             'p': "<%s>" % os.getpid()
         }
 
-        
         return atoms
 
     def formatMessage(self, record):
@@ -216,9 +215,9 @@ class CustomFormatter(AccessFormatter):
         scope = recordcopy.__dict__["scope"]
         #pprint(vars(recordcopy))
         safe_atoms = self.atoms_wrapper_class(
-            self.atoms(os.environ, datetime.now(), scope, recordcopy.status_code,recordcopy.created)
+            self.atoms(os.environ, datetime.now(), scope, recordcopy.status_code, recordcopy.created)
         )
         recordcopy.__dict__.update(safe_atoms)
-        
-        #pprint(vars(os.environ))
+
+        # pprint(vars(os.environ))
         return super().formatMessage(recordcopy)

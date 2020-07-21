@@ -41,6 +41,5 @@ app.add_middleware(
 def probe(*, accept_language: str = Header('de-CH'),x_session_id: str = Header('-'),response: Response):
     start = time.time()
     # sleep 1 second to check response time logging
-    time.sleep(2)
-    response.headers["X-Response-Time"] = str(np.round(time.time() - start,6))
+    response.headers["X-Response-Time"] = str.format('{0:.6f}',np.round(time.time() - start,6))
     return {"message": "FastAPI Inconnect","release": "1"}
