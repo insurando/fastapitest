@@ -1,5 +1,5 @@
-uvicorn
 gunicorn
 numpy
 fastapi
 click
+git+git://github.com/mindrunner/uvicorn@master#uvicorn

@@ -3,7 +3,7 @@
 docker stop fastapi
 docker rm fastapi
 docker run -it --name=fastapi \
-    -p 8080:80 \
+    -p 8081:80 \
     -v $PWD/app:/app \
     -v $PWD/gunicorn_conf.py:/gunicorn_conf.py \
     -v $PWD/start.sh:/start.sh \
