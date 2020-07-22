@@ -10,6 +10,7 @@ import itertools
 from fastapi.middleware.cors import CORSMiddleware
 import asyncio
 import numpy as np
+from pprint import pprint
 
 #=========== CONSTANTS and ERROR Definitions =================
 global LANGUAGES
@@ -23,9 +24,8 @@ import logging
 
 ################## MAIN App ####################
 app = FastAPI(title='test',description='test',version='1.0.0')
-
 origins = [
-    "*"
+    "*", "https://fastapi.tiangolo.com"
 ]
 app.add_middleware(
     CORSMiddleware,
@@ -38,7 +38,7 @@ app.add_middleware(
 
 ################## Main Endpoint ###################
 @app.get("/probe")
-def probe(*, accept_language: str = Header('de-CH'),x_session_id: str = Header('-'),response: Response):
+async def probe(*, accept_language: str = Header('de-CH'),x_session_id: str = Header('-'),x_google_id: str = Header('-'),response: Response):
     start = time.time()
     # sleep 1 second to check response time logging
     response.headers["X-Response-Time"] = str.format('{0:.6f}',np.round(time.time() - start,6))

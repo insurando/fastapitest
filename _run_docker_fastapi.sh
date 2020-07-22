@@ -5,9 +5,7 @@ docker rm fastapi
 docker run -d --name=fastapi \
     -p 8080:80 \
     -v $PWD/app:/app \
-    -v $PWD/gunicorn_conf.py:/gunicorn_conf.py \
     -v $PWD/start.sh:/start.sh \
-    -v $PWD/logging.conf:/logging.conf \
     -v $PWD/start-reload.sh:/start-reload.sh \
     fastapi bash -c "/start-reload.sh"
 docker logs fastapi --follow
